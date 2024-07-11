@@ -25,7 +25,7 @@ function EditorComponent() {
         theme="vs-dark"
         options={{
           fontSize: 20,
-          contextmenu: undefined,
+          contextmenu: false,
         }}
         value={code}
       />
