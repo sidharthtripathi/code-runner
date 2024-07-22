@@ -1,3 +1,4 @@
+import { useState } from "react";
 import EditorComponent from "./components/Editor";
 import {
   ResizableHandle,
@@ -6,6 +7,7 @@ import {
 } from "./components/ui/resizable";
 
 export default function App() {
+  const [output, setOutput] = useState("output");
   return (
     <main>
       <p className="block sm:hidden text-center font-bold text-xl mt-20">
@@ -17,7 +19,7 @@ export default function App() {
           className="w-full rounded-lg border"
         >
           <ResizablePanel className="h-screen">
-            <EditorComponent />
+            <EditorComponent setOutput={setOutput} />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel>
@@ -30,7 +32,7 @@ export default function App() {
               <ResizableHandle />
               <ResizablePanel>
                 <div className="flex h-full items-center justify-center p-6">
-                  <span className="font-semibold">Output</span>
+                  <span className="font-semibold">{output}</span>
                 </div>
               </ResizablePanel>
             </ResizablePanelGroup>

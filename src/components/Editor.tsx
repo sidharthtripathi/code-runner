@@ -11,14 +11,39 @@ import {
 import { useState } from "react";
 import { PlayIcon } from "@radix-ui/react-icons";
 type Language = "cpp" | "javascript" | "java" | "typescript";
-function EditorComponent() {
-  const code = `console.log("hello there")`;
-  const [selectedLang, selectLang] = useState<Language>("typescript");
+function EditorComponent({
+  setOutput,
+}: {
+  setOutput: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const [code, setCode] = useState<undefined | string>(
+    `#include <iostream>
+using namespace std;
+int main(){
+cout<<"hello world";
+}
+    `
+  );
+  const [selectedLang, selectLang] = useState<Language>("cpp");
   return (
     <main className="h-full">
       <nav className="p-2 flex gap-4 items-center">
         <LanguageSelector selectLang={selectLang} />
-        <PlayIcon className="min-w-5 min-h-5 hover:cursor-pointer" />
+        <PlayIcon
+          className="min-w-5 min-h-5 hover:cursor-pointer"
+          onClick={async () => {
+            setOutput("Loading...");
+            const res = await fetch(`http://localhost:3000/${selectedLang}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain",
+              },
+              body: code,
+            });
+            const output = await res.text();
+            setOutput(output);
+          }}
+        />
       </nav>
       <Editor
         language={selectedLang}
@@ -26,6 +51,9 @@ function EditorComponent() {
         options={{
           fontSize: 20,
           contextmenu: false,
+        }}
+        onChange={(e) => {
+          setCode(e);
         }}
         value={code}
       />
@@ -42,12 +70,11 @@ function LanguageSelector({
   return (
     <Select
       onValueChange={(e) => {
-        console.log(e);
         selectLang(e as Language);
       }}
     >
       <SelectTrigger className="w-fit">
-        <SelectValue placeholder="Select a Language" />
+        <SelectValue placeholder="cpp" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
